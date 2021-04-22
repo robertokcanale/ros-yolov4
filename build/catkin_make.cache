@@ -1,0 +1,2 @@
+scaled_yolov4
+-DCATKIN_DEVEL_PREFIX=/home/maclab/Documents/RCanale/ros-yolov4/devel -DCMAKE_INSTALL_PREFIX=/home/maclab/Documents/RCanale/ros-yolov4/install -G Unix Makefiles

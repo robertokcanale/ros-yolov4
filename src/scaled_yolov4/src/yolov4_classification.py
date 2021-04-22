@@ -12,13 +12,13 @@ import torch
 import numpy as np
 from sensor_msgs.msg import Image as TactileImage
 from cv_bridge import CvBridge
-from handsnet_yolo.msg import Image_BB
-from handsnet_yolo.msg import BB
+from scaled_yolov4.msg import Image_BB
+from scaled_yolov4.msg import BB
+
 from models.experimental import attempt_load
 from utils.datasets import LoadStreams, LoadImages
-from utils.general import check_img_size, check_requirements, check_imshow, non_max_suppression, apply_classifier, \
-    scale_coords, xyxy2xywh, strip_optimizer, set_logging, increment_path
-from utils.plots import plot_one_box
+from utils.general import (
+    check_img_size, non_max_suppression, apply_classifier, scale_coords, xyxy2xywh, plot_one_box, strip_optimizer)
 from utils.torch_utils import select_device, load_classifier, time_synchronized
 
 #CALLBACK FOR THE IMAGE
@@ -62,7 +62,7 @@ def callback_image(data):
     elif hand_contact == 0 or hand_contact == 99:
         print("No Hand To Detect")
 
-#BB_MESSAGE
+"""#BB_MESSAGE
 def bb_message(det):
     global bounding_box_array
     #CREATE MESSAGE TO PUBLISH  
@@ -77,7 +77,7 @@ def bb_message(det):
         bounding_box_array.bb_array[i] = bounding_box
 
     return bounding_box_array
-
+"""
 #CALLBACK FOR CONTACT
 def callback_contact(contact):
     global hand_contact
@@ -96,13 +96,13 @@ if __name__ == '__main__':
     parser.add_argument('--agnostic-nms', action='store_true', help='class-agnostic NMS')
     parser.add_argument('--augment', action='store_true', help='augmented inference')
     opt = parser.parse_args()
-    weights = 'src/handsnet_yolo/src/data/best_finetune3.pt' 
+    weights = 'src/scaled_yolo/src/data/best_csp_3classes.pt' 
     imgsz = 416
     view_img = True
     conf_thres = 0.5
     iou_thres = 0.5
     device = '0' #or CPU if needed
-    bounding_box_array = Image_BB()
+    #bounding_box_array = Image_BB()
     #colors = [[0,0,255], [0,255,0], [255,0,0], [100,100,100], [0,50,150], [75,150,0] ] #6 classes
     colors = [[0,0,255], [0,255,0], [255,0,0]] #3 classes
     #GPU
@@ -116,7 +116,7 @@ if __name__ == '__main__':
 
     #NODE INITIALIZATION
     rospy.init_node('hand_classification')
-    pub = rospy.Publisher('BundingBoxArray', Image_BB, queue_size=10)
+    #pub = rospy.Publisher('BundingBoxArray', Image_BB, queue_size=10)
     rospy.Subscriber('tactile_image_yolo', TactileImage, callback_image) #this is a rosmsmg.msg Image
     rospy.Subscriber('hand_contact', Int16, callback_contact) #this is a rosmsmg.msg Image
 
